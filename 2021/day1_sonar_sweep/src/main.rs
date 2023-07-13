@@ -6,14 +6,14 @@ use std::path::Path;
 fn main() -> io::Result<()> {
     let file_path = Path::new("sweep_report.txt");
 
-    first_part(file_path)?;
-    second_part(file_path)?;
-    second_part_general(file_path, &3)?;
+    println!("first_part : {}", first_part(file_path)?);
+    println!("second_part : {}", second_part(file_path)?);
+    println!("second_part_general : {}", second_part_general(file_path, &3)?);
 
     Ok(())
 }
 
-fn first_part(path: &Path) -> io::Result<()> {
+fn first_part(path: &Path) -> io::Result<usize> {
     let file = File::open(path)?;
     let lines: Lines<BufReader<File>> = BufReader::new(file).lines();
     let mut measure_inc_count = 0;
@@ -31,11 +31,10 @@ fn first_part(path: &Path) -> io::Result<()> {
         prev_measure = Some(sweep_reading);
     }
 
-    println!("{}", measure_inc_count);
-    Ok(())
+    Ok(measure_inc_count)
 }
 
-fn second_part(path: &Path) -> io::Result<()> {
+fn second_part(path: &Path) -> io::Result<usize> {
     let file = File::open(path)?;
     let lines: Lines<BufReader<File>> = BufReader::new(file).lines();
     let mut measure_inc_count = 0;
@@ -78,11 +77,10 @@ fn second_part(path: &Path) -> io::Result<()> {
         }
     }
 
-    println!("{}", measure_inc_count);
-    Ok(())
+    Ok(measure_inc_count)
 }
 
-fn second_part_general(path: &Path, window_size: &usize) -> io::Result<()> {
+fn second_part_general(path: &Path, window_size: &usize) -> io::Result<usize> {
     let file = File::open(path)?;
     let lines: Lines<BufReader<File>> = BufReader::new(file).lines();
     let mut measure_inc_count = 0;
@@ -103,6 +101,5 @@ fn second_part_general(path: &Path, window_size: &usize) -> io::Result<()> {
         prev_measurements.push_front(sweep_reading);
     }
 
-    println!("{}", measure_inc_count);
-    Ok(())
+    Ok(measure_inc_count)
 }
