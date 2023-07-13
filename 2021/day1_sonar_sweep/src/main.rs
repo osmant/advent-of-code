@@ -1,27 +1,17 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader, Lines};
-use std::io;
-use std::path::Path;
+fn main() {
+    let lines = include_str!("input.txt");
 
-fn main() -> io::Result<()> {
-    let file_path = Path::new("sweep_report.txt");
-
-    println!("first_part : {}", first_part(file_path)?);
-    println!("second_part : {}", second_part(file_path)?);
-    println!("second_part_general : {}", second_part_general(file_path, &3)?);
-
-    Ok(())
+    println!("first_part : {}", first_part(lines));
+    println!("second_part : {}", second_part(lines));
+    println!("second_part_general : {}", second_part_general(lines, &3));
 }
 
-fn first_part(path: &Path) -> io::Result<usize> {
-    let file = File::open(path)?;
-    let lines: Lines<BufReader<File>> = BufReader::new(file).lines();
+fn first_part(input: &str) -> usize {
     let mut measure_inc_count = 0;
     let mut prev_measure: Option<usize> = None;
 
-    for line in lines {
-        let line = line.expect("Unable to read the line");
-        let sweep_reading = line.parse::<usize>().expect("Unable to parse the line to integer");
+    for line in input.lines() {
+        let sweep_reading = line.trim().parse::<usize>().expect("Unable to parse the line to integer");
 
         if let Some(prev) = prev_measure  {
             if prev < sweep_reading {
@@ -31,19 +21,17 @@ fn first_part(path: &Path) -> io::Result<usize> {
         prev_measure = Some(sweep_reading);
     }
 
-    Ok(measure_inc_count)
+    measure_inc_count
 }
 
-fn second_part(path: &Path) -> io::Result<usize> {
-    let file = File::open(path)?;
-    let lines: Lines<BufReader<File>> = BufReader::new(file).lines();
+fn second_part(input: &str) -> usize {
     let mut measure_inc_count = 0;
     let mut prev_1: Option<usize> = None;
     let mut prev_2: Option<usize> = None;
     let mut prev_3: Option<usize> = None;
 
-    for line in lines {
-        let line = line.expect("Unable to read the line");
+
+    for line in input.lines() {
         let sweep_reading = line.parse::<usize>().expect("Unable to parse the line to integer");
 
         match (prev_1, prev_2, prev_3) {
@@ -77,18 +65,15 @@ fn second_part(path: &Path) -> io::Result<usize> {
         }
     }
 
-    Ok(measure_inc_count)
+    measure_inc_count
 }
 
-fn second_part_general(path: &Path, window_size: &usize) -> io::Result<usize> {
-    let file = File::open(path)?;
-    let lines: Lines<BufReader<File>> = BufReader::new(file).lines();
+fn second_part_general(input: &str, window_size: &usize) -> usize {
     let mut measure_inc_count = 0;
     let mut prev_measurements = std::collections::VecDeque::with_capacity(*window_size);
 
     let mut prev_moving_sum = 0;
-    for line in lines {
-        let line = line.expect("Unable to read the line");
+    for line in input.lines() {
         let sweep_reading = line.parse::<usize>().expect("Unable to parse the line to integer");
         if prev_measurements.len() == *window_size {
             let sum: usize = prev_measurements.iter().sum();
@@ -101,5 +86,5 @@ fn second_part_general(path: &Path, window_size: &usize) -> io::Result<usize> {
         prev_measurements.push_front(sweep_reading);
     }
 
-    Ok(measure_inc_count)
+    measure_inc_count
 }
